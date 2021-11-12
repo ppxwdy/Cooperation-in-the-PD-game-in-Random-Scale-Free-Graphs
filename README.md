@@ -31,10 +31,6 @@ For this final project, we are going to study the cooperation in the prisoner's 
 
    Pi <   Pj,   Accepting j's strategy with a probability p
    <img width="1014" alt="Screen Shot 2021-11-12 at 4 57 41 PM" src="https://user-images.githubusercontent.com/58164010/141439624-2967bbe2-2972-4383-8995-95d21577d6bf.png">
-   $$
-   p = \beta*(Pj - Pi),   \beta = (max[ki, k] * b)^{-1}
-   $$
-
 ​		which means, the p varies for each time we use it, and we need to know the degrees for all the vertices in advance
 
 6. Iteration
@@ -55,15 +51,5 @@ For this final project, we are going to study the cooperation in the prisoner's 
 
 Other things are the same for this part, the only difference is how to assign c or d to the vertices.
 <img width="999" alt="Screen Shot 2021-11-12 at 4 57 31 PM" src="https://user-images.githubusercontent.com/58164010/141439656-519ef058-1fcd-4f82-8584-b5e93645b972.png">
-
-$$
-c_k(0) =
-\begin{cases} 
-1,  k > k* \\
-0,  k < k*
-\end{cases}
-\\k* \in [2, 3]\\
-ck = nk(c)/Nk
-$$
 We can get a c(t) - b curve and a c means - b curve.
 
