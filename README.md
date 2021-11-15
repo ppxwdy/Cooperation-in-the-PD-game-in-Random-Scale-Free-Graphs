@@ -52,7 +52,5 @@ For this final project, we are going to study the cooperation in the prisoner's 
 Other things are the same for this part, the only difference is how to assign c or d to the vertices.
 <img width="999" alt="Screen Shot 2021-11-12 at 4 57 31 PM" src="https://user-images.githubusercontent.com/58164010/141439656-519ef058-1fcd-4f82-8584-b5e93645b972.png">
 We can get a c(t) - b curve and a c means - b curve.
-<img width="2048" alt="Screenshot 2021-11-13 at 2 42 56 PM" src="https://user-images.githubusercontent.com/58164010/141609447-27ddb112-f8fa-430b-969b-111c1f096cd6.png">
-
 
 

@@ -1,8 +1,10 @@
-from multiprocessing import Process, Manager, process
+from multiprocessing import Process, Manager
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import pandas as pd
+
 
 def generator(N, m):
     """
@@ -14,9 +16,9 @@ def generator(N, m):
 
     # randomly generate the C and D
     identity = np.ones(N, dtype=int)
-    Cs = np.random.choice(N, N//2, replace=False)
+    Cs = np.random.choice(N, N // 2, replace=False)
     for i in Cs:
-        identity[i] =  0 # 0 - C, 1 - D
+        identity[i] = 0  # 0 - C, 1 - D
 
     # generate a BA network with 4000 nodes and <k> = 2m = 4
     ba = nx.barabasi_albert_graph(N, m, seed=666)
@@ -30,9 +32,12 @@ def generator(N, m):
     degrees = list(ba.degree())
 
     return ba, adj, identity, degrees, nodes
-ba, adj, identity, degrees, nodes = generator(4000, 2)
 
-def cal_gain(node, b, adj):
+
+# ba, adj, identity, degrees, nodes = generator(4000, 2)
+
+
+def cal_gain(node, b, adj, identity):
     """
     calculate gain for the given node
     :param node: the node i
@@ -48,7 +53,8 @@ def cal_gain(node, b, adj):
             gain += b
     return gain
 
-def update(nodei, nodej, b, gains, records, identity):
+
+def update(nodei, nodej, b, gains, records, identity, degrees):
     """
     compare nodei's gain with its neighbour nodej, and find out
     how to udpate nodei's od
@@ -61,7 +67,7 @@ def update(nodei, nodej, b, gains, records, identity):
     pd = records[1]
     f = records[2]
     if gains[nodei] < gains[nodej]:
-        beta = 1 / (max(degrees[nodei][1], degrees[nodei][1])*b)
+        beta = 1 / (max(degrees[nodei][1], degrees[nodei][1]) * b)
         dice = np.random.rand()
         # dice <= beta means accept
         if dice <= beta:
@@ -69,12 +75,13 @@ def update(nodei, nodej, b, gains, records, identity):
             idj = identity[nodej]
             # if i and j have different id and i will change
             if idi != idj:
-                if  idi == 0:
+                if idi == 0:
                     pc[nodei] = 0
                 elif idi == 1:
                     pd[nodei] = 0
                 f[nodei] = 1
             identity[nodei] = identity[nodej]
+
 
 def choose_neighbor(nodei, adj):
     """
@@ -86,8 +93,9 @@ def choose_neighbor(nodei, adj):
     dice = np.random.randint(0, len(neighbors))
     return neighbors[dice]
 
+
 # generate the b values
-bs = np.arange(1, 3, 0.1)
+bs = np.arange(1, 5, 0.1)
 
 # transient time
 t0 = 500
@@ -99,9 +107,9 @@ ts = 10000
 N = 4000
 m = 2
 
-
-
 s_all = time.time()
+
+
 # for b in bs:
 
 def iter(N, m, c_means, pcs, pds, fs, b):
@@ -126,11 +134,11 @@ def iter(N, m, c_means, pcs, pds, fs, b):
         # calculate gain
         gains = dict()
         for node in nodes:
-            gains[node] = cal_gain(node, b, adj)
+            gains[node] = cal_gain(node, b, adj, identity)
         # update
         for node in nodes:
             nodej = choose_neighbor(node, adj)
-            update(node, nodej, b, gains, records, identity)
+            update(node, nodej, b, gains, records, identity, degrees)
 
     # get steady
     key = True
@@ -139,23 +147,25 @@ def iter(N, m, c_means, pcs, pds, fs, b):
         # calculate gain
         gains = dict()
         for node in nodes:
-            gains[node] = cal_gain(node, b, adj)
+            gains[node] = cal_gain(node, b, adj, identity)
         # update
         for node in nodes:
             nodej = choose_neighbor(node, adj)
-            update(node, nodej, b, gains, records, identity)
+            update(node, nodej, b, gains, records, identity, degrees)
         newc = N - np.sum(identity)
         # find out reach steady state or not
         if key:
-            if abs(newc - oldc) < 1/np.sqrt(N):
+            if abs(newc - oldc) < 1 / np.sqrt(N):
                 print(f'we have reached the steady state after {t} times evolution.')
                 key = False
     eb = time.time()
-    c_means.append((b, (N - np.sum(identity))/N))
+    c_means.append((b, (N - np.sum(identity)) / N))
     pcs.append((b, np.sum(records[0])))
     pds.append((b, np.sum(records[1])))
     fs.append((b, np.sum(records[2])))
-    print(f'The time we used for b = {b} is {eb-sb}s.')
+    print(f'The time we used for b = {b} is {eb - sb}s.')
+
+
 # ea = time.time()
 # print(f'The time we used for all bs is {s_all-ea}s.')
 
@@ -190,21 +200,21 @@ if __name__ == '__main__':
     c_means.sort(key=takefirst)
     pds.sort(key=takefirst)
     fs.sort(key=takefirst)
-    
+
     pcs_ = [pcs[i][1] for i in range(len(pcs))]
     pds_ = [pds[i][1] for i in range(len(pds))]
     c_means_ = [c_means[i][1] for i in range(len(c_means))]
     fs_ = [fs[i][1] for i in range(len(fs))]
 
-    print("original ", c_means)
-    print('new ', c_means_)
-
+    # save the data
+    data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
+    data.to_csv('part1 data.csv', index=False, sep=',')
 
     plt.plot(bs, c_means_, 'o-', label='<c>')
-    plt.plot(bs, np.asarray(pcs_)/2000, '^-', label='PC')
-    plt.plot(bs, np.asarray(pds_)/2000, 's-', label='PD')
-    plt.plot(bs, np.asarray(fs_)/N, '*-', label='F')
+    plt.plot(bs, np.asarray(pcs_) / 2000, '^-', label='PC')
+    plt.plot(bs, np.asarray(pds_) / 2000, 's-', label='PD')
+    plt.plot(bs, np.asarray(fs_) / N, '*-', label='F')
     plt.legend()
     plt.xlabel('b')
-    plt.savefig('pic2.png')
+    plt.savefig('pic1.png')
     plt.show()
