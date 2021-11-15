@@ -22,6 +22,7 @@ def generator(N, m):
 
     # generate a BA network with 4000 nodes and <k> = 2m = 4
     ba = nx.barabasi_albert_graph(N, m, seed=666)
+    # ba = nx.scale_free_graph(N)
 
     # nodes
     nodes = [i for i in range(N)]
@@ -95,7 +96,7 @@ def choose_neighbor(nodei, adj):
 
 
 # generate the b values
-bs = np.arange(1, 5, 0.1)
+bs = np.arange(4.5, 6, 0.1)
 
 # transient time
 t0 = 500
@@ -207,8 +208,8 @@ if __name__ == '__main__':
     fs_ = [fs[i][1] for i in range(len(fs))]
 
     # save the data
-    data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
-    data.to_csv('part1 data.csv', index=False, sep=',')
+    # data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
+    # data.to_csv('part1 data.csv', index=False, sep=',')
 
     plt.plot(bs, c_means_, 'o-', label='<c>')
     plt.plot(bs, np.asarray(pcs_) / 2000, '^-', label='PC')
@@ -216,5 +217,5 @@ if __name__ == '__main__':
     plt.plot(bs, np.asarray(fs_) / N, '*-', label='F')
     plt.legend()
     plt.xlabel('b')
-    plt.savefig('pic1.png')
+    # plt.savefig('pic1.png')
     plt.show()
