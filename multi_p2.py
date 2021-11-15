@@ -96,49 +96,6 @@ N = 4000
 m = 2
 
 
-# def iter(N, m, b, k, record):
-#     ct = []
-#     sb = time.time()
-#     # generate the graph
-#     ba, adj, identity, degrees, nodes = generator2(N, m, k)
-#
-#     # pre-evo
-#     for t in range(t0):
-#         # calculate gain
-#         gains = dict()
-#         for node in nodes:
-#             gains[node] = cal_gain(node, b, adj, identity)
-#         # update
-#         for node in nodes:
-#             nodej = choose_neighbor(node, adj)
-#             update2(node, nodej, b, gains, identity, degrees)
-#         ct.append((N - np.sum(identity)) / N)
-#
-#     # get steady
-#     key = True
-#     for t in range(t1):
-#         oldc = N - np.sum(identity)
-#         # calculate gain
-#         gains = dict()
-#         for node in nodes:
-#             gains[node] = cal_gain(node, b, adj, identity)
-#         # update
-#         for node in nodes:
-#             nodej = choose_neighbor(node, adj)
-#             update2(node, nodej, b, gains, identity, degrees)
-#         newc = N - np.sum(identity)
-#         # find out reach steady state or not
-#         if key:
-#             if abs(newc - oldc) < 1 / np.sqrt(N):
-#                 print(f'we have reached the steady state after {t} times evolution.')
-#                 key = False
-#         ct.append((N - np.sum(identity)) / N)
-#     eb = time.time()
-#
-#     print(f'The time we used for b = {b} is {eb - sb}s.')
-#     record[b] = ct
-
-
 def iter(adj, identity, degrees, nodes, b, record, start):
     ct = [start]
     sb = time.time()
@@ -180,10 +137,6 @@ def iter(adj, identity, degrees, nodes, b, record, start):
 
     print(f'The time we used for b = {b} is {eb - sb}s.')
     record[b] = ct
-
-
-def takefirst(x):
-    return x[0]
 
 
 if __name__ == '__main__':
@@ -230,8 +183,17 @@ if __name__ == '__main__':
     print(f'The whole process include t0 and t1 need {time.time() - s}s')
 
     # save the data
-    # data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
-    # data.to_csv('part1 data.csv', index=False, sep=',')
+    c_m1 = []
+    c_m2 = []
+    for b in bs:
+        c_m1.append(record1[b])
+        c_m2.append(record2[b])
+    data1 = pd.DataFrame(np.asarray(c_m1).T, columns=bs)
+    data2 = pd.DataFrame(np.asarray(c_m2).T, columns=bs)
+
+    data1.to_csv('part2_k2.csv', index=False, sep=',')
+    data2.to_csv('part2_k3.csv', index=False, sep=',')
+
     t = [i for i in range(1, t0 + t1 + 2)]
     fig, ax = plt.subplots(2, 1, figsize=(10, 20), sharex='all')
     for b in bs:
@@ -247,5 +209,5 @@ if __name__ == '__main__':
     ax[0].legend()
     ax[1].legend()
 
-    # plt.savefig('pic1.png')
+    plt.savefig('pic_part2.png')
     plt.show()
