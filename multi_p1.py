@@ -96,7 +96,7 @@ def choose_neighbor(nodei, adj):
 
 
 # generate the b values
-bs = np.arange(4.5, 6, 0.1)
+bs = np.arange(1, 5.8, 0.1)
 
 # transient time
 t0 = 500
@@ -188,13 +188,15 @@ if __name__ == '__main__':
     fs = ma.list()
     s = time.time()
     processes = []
-    for b in bs:
-        p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b,))
-        processes.append(p)
-        p.start()
+    for i in range(0, 48, 8):
+        bs_ = bs[i:i+8]
+        for b in bs_:
+            p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b,))
+            processes.append(p)
+            p.start()
 
-    for p in processes:
-        p.join()
+        for p in processes:
+            p.join()
     print(f'The whole process include t0 and t1 need {time.time() - s}s')
 
     pcs.sort(key=takefirst)
