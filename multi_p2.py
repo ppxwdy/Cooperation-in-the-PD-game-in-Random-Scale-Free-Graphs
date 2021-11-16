@@ -83,7 +83,7 @@ def choose_neighbor(nodei, adj):
 
 
 # generate the b values
-bs = np.arange(1, 3.3, 0.1)
+bs = np.arange(1, 5.8, 0.1)
 
 # transient time
 t0 = 50
@@ -99,6 +99,7 @@ m = 2
 def iter(adj, identity, degrees, nodes, b, record, start):
     ct = [start]
     sb = time.time()
+    print(f'b = {b} is started.')
     # generate the graph
     # ba, adj, identity, degrees, nodes = generator2(N, m, k)
 
@@ -114,25 +115,6 @@ def iter(adj, identity, degrees, nodes, b, record, start):
             update2(node, nodej, b, gains, identity, degrees)
         ct.append((N - np.sum(identity)) / N)
 
-    # get steady
-    key = True
-    for t in range(t1):
-        oldc = N - np.sum(identity)
-        # calculate gain
-        gains = dict()
-        for node in nodes:
-            gains[node] = cal_gain(node, b, adj, identity)
-        # update
-        for node in nodes:
-            nodej = choose_neighbor(node, adj)
-            update2(node, nodej, b, gains, identity, degrees)
-        newc = N - np.sum(identity)
-        # find out reach steady state or not
-        if key:
-            if abs(newc - oldc) < 1 / np.sqrt(N):
-                print(f'we have reached the steady state after {t} times evolution.')
-                key = False
-        ct.append((N - np.sum(identity)) / N)
     eb = time.time()
 
     print(f'The time we used for b = {b} is {eb - sb}s.')
@@ -145,13 +127,14 @@ if __name__ == '__main__':
     record1 = ma.dict()
     record2 = ma.dict()
     s = time.time()
-    processes = []
+
     k1 = 2
     k2 = 3
     ba, adj, identity, degrees, nodes = generator2(N, m, k1)
     start = float("%.4f" % ((N - np.sum(identity)) / N))
-    for i in range(0, 24, 8):
-        bs_ = bs[i:i + 8]
+    for i in range(0, 48, 6):
+        processes = []
+        bs_ = bs[i:i + 6]
         for b in bs:
             adj_ = copy.deepcopy(adj)
             id_ = copy.deepcopy(identity)
@@ -167,8 +150,9 @@ if __name__ == '__main__':
 
     ba, adj, identity, degrees, nodes = generator2(N, m, k2)
     start = float("%.4f" % ((N - np.sum(identity)) / N))
-    for i in range(0, 24, 8):
-        bs_ = bs[i:i + 8]
+    for i in range(0, 48, 6):
+        processes = []
+        bs_ = bs[i:i + 6]
         for b in bs:
             adj_ = copy.deepcopy(adj)
             id_ = copy.deepcopy(identity)
