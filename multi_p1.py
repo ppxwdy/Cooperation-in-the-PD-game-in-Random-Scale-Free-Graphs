@@ -106,13 +106,13 @@ def choose_neighbor(nodei, adj):
 
 # generate the b values
 # bs = np.arange(1, 5.8, 0.1)
-bs = np.arange(1, 2.8, 0.1)
+bs = np.arange(1, 3.4, 0.1)
 # transient time
-t0 = 500
+t0 = 5000
 # get steady
-t1 = 100
+t1 = 1000
 # after steady
-ts = 1000
+ts = 10000
 
 N = 4000
 m = 2
@@ -122,10 +122,10 @@ s_all = time.time()
 
 # for b in bs:
 
-def iter(N, m, c_means, pcs, pds, fs, b):
+def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
     sb = time.time()
     # generate the graph
-    ba, adj, identity, degrees, nodes = generator(N, m)
+
 
     # pre-evo
     for t in range(t0):
@@ -211,12 +211,12 @@ if __name__ == '__main__':
     # record for the number of F
     fs = ma.list()
     s = time.time()
-
-    for i in range(0, 18, 6):
+    ba, adj, identity, degrees, nodes = generator(N, m)
+    for i in range(0, 24, 6):
         processes = []
         bs_ = bs[i:i+6]
         for b in bs_:
-            p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b,))
+            p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees))
             processes.append(p)
             p.start()
 
@@ -235,8 +235,8 @@ if __name__ == '__main__':
     fs_ = [fs[i][1] for i in range(len(fs))]
 
     # save the data
-    # data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
-    # data.to_csv('part1 data.csv', index=False, sep=',')
+    data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
+    data.to_csv('part1 data2.csv', index=False, sep=',')
 
     plt.plot(bs, c_means_, 'o-', label='<c>')
     plt.plot(bs, np.asarray(pcs_) / N, '^-', label='PC')
@@ -244,5 +244,5 @@ if __name__ == '__main__':
     plt.plot(bs, np.asarray(fs_) / N, '*-', label='F')
     plt.legend()
     plt.xlabel('b')
-    # plt.savefig('pic1.png')
+    plt.savefig('pic1.png')
     plt.show()
