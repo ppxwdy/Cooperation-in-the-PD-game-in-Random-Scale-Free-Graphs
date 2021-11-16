@@ -83,14 +83,10 @@ def choose_neighbor(nodei, adj):
 
 
 # generate the b values
-bs = np.arange(1, 5.8, 0.1)
+bs = np.arange(1, 3.4, 0.1)
 
 # transient time
-t0 = 50
-# get steady
-t1 = 10
-# after steady
-ts = 10000
+t0 = 10000
 
 N = 4000
 m = 2
@@ -132,10 +128,10 @@ if __name__ == '__main__':
     k2 = 3
     ba, adj, identity, degrees, nodes = generator2(N, m, k1)
     start = float("%.4f" % ((N - np.sum(identity)) / N))
-    for i in range(0, 48, 6):
+    for i in range(0, 24, 6):
         processes = []
         bs_ = bs[i:i + 6]
-        for b in bs:
+        for b in bs_:
             adj_ = copy.deepcopy(adj)
             id_ = copy.deepcopy(identity)
             de_ = copy.deepcopy(degrees)
@@ -150,10 +146,10 @@ if __name__ == '__main__':
 
     ba, adj, identity, degrees, nodes = generator2(N, m, k2)
     start = float("%.4f" % ((N - np.sum(identity)) / N))
-    for i in range(0, 48, 6):
+    for i in range(0, 24, 6):
         processes = []
         bs_ = bs[i:i + 6]
-        for b in bs:
+        for b in bs_:
             adj_ = copy.deepcopy(adj)
             id_ = copy.deepcopy(identity)
             de_ = copy.deepcopy(degrees)
@@ -178,13 +174,11 @@ if __name__ == '__main__':
     data1.to_csv('part2_k2.csv', index=False, sep=',')
     data2.to_csv('part2_k3.csv', index=False, sep=',')
 
-    t = [i for i in range(1, t0 + t1 + 2)]
+    t = [i for i in range(1, t0 + 2)]
     fig, ax = plt.subplots(2, 1, figsize=(10, 20), sharex='all')
     for b in bs:
         ax[0].plot(t, record1[b], 'o-', label='b = ' + str(b))
         ax[1].plot(t, record2[b], 's-', label='b = ' + str(b))
-        print(record1[b][0], '1111')
-        print(record2[b][0], '2222')
     plt.xlabel('t')
     plt.xscale('log')
 
