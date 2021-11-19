@@ -106,7 +106,7 @@ def choose_neighbor(nodei, adj):
 
 # generate the b values
 # bs = np.arange(1, 5.8, 0.1)
-bs = np.arange(1, 3.4, 0.1)
+bs = np.arange(1, 2, 0.1)
 # transient time
 t0 = 5000
 # get steady
@@ -123,6 +123,7 @@ s_all = time.time()
 # for b in bs:
 
 def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
+    print(f'b = {b} start.')
     sb = time.time()
     # generate the graph
 
@@ -156,7 +157,7 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
             if abs(newc - oldc) < 1 / np.sqrt(N):
                 print(f'we have reached the steady state after {t} times evolution.')
                 key = False
-
+    c_means.append((b, (N - np.sum(identity)) / N))
     # pc, pd, f will all have N elements
     # if born as c or d, in pc, pd the elements on the same pos will be 1, 0 otherwise
     # if change id, the pos in f will be 1
@@ -184,7 +185,7 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
 
 
     eb = time.time()
-    c_means.append((b, (N - np.sum(identity)) / N))
+
     pcs.append((b, np.sum(records[0])))
     pds.append((b, np.sum(records[1])))
     fs.append((b, np.sum(records[2])))
@@ -212,9 +213,9 @@ if __name__ == '__main__':
     fs = ma.list()
     s = time.time()
     ba, adj, identity, degrees, nodes = generator(N, m)
-    for i in range(0, 24, 6):
+    for i in range(0, len(bs), 5):
         processes = []
-        bs_ = bs[i:i+6]
+        bs_ = bs[i:i+5]
         for b in bs_:
             p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees))
             processes.append(p)
@@ -236,7 +237,7 @@ if __name__ == '__main__':
 
     # save the data
     data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
-    data.to_csv('part1 data2.csv', index=False, sep=',')
+    data.to_csv('part1 data1.csv', index=False, sep=',')
 
     plt.plot(bs, c_means_, 'o-', label='<c>')
     plt.plot(bs, np.asarray(pcs_) / N, '^-', label='PC')
@@ -244,5 +245,5 @@ if __name__ == '__main__':
     plt.plot(bs, np.asarray(fs_) / N, '*-', label='F')
     plt.legend()
     plt.xlabel('b')
-    plt.savefig('pic1.png')
+    plt.savefig('pic01.png')
     plt.show()
