@@ -204,7 +204,7 @@ def takefirst(x):
 if __name__ == '__main__':
     ma = Manager()
     for iters in tqdm(range(10)):
-    # record the <c> for each b
+        # record the <c> for each b
         c_means = ma.list()
         # record for the number of PC
         pcs = ma.list()
@@ -238,7 +238,7 @@ if __name__ == '__main__':
 
         # save the data
         data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
-        data.to_csv(f'part1 data_comp2_{iters}.csv', index=False, sep=',')
+        data.to_csv(f'part1 data_comp1_{iters}.csv', index=False, sep=',')
 
         # plt.plot(bs, c_means_, 'o-', label='<c>')
         # plt.plot(bs, np.asarray(pcs_) / N, '^-', label='PC')
