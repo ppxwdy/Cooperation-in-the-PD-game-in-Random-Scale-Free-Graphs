@@ -106,8 +106,8 @@ def choose_neighbor(nodei, adj):
 
 
 # generate the b values
-# bs = np.arange(1, 5.8, 0.1)
-bs = np.arange(1, 2, 0.1)
+bs = np.arange(1, 5.8, 0.1)
+# bs = np.arange(1, 2, 0.1)
 # transient time
 t0 = 5000
 # get steady
@@ -203,8 +203,8 @@ def takefirst(x):
 
 if __name__ == '__main__':
     ma = Manager()
-    for iter in range(10):
-        # record the <c> for each b
+    for iters in tqdm(range(10)):
+    # record the <c> for each b
         c_means = ma.list()
         # record for the number of PC
         pcs = ma.list()
@@ -213,10 +213,10 @@ if __name__ == '__main__':
         # record for the number of F
         fs = ma.list()
         s = time.time()
-        ba, adj, identity, degrees, nodes = generator(N, m, 666+iter)
-        for i in range(0, len(bs), 5):
+        ba, adj, identity, degrees, nodes = generator(N, m, 666+iters)
+        for i in range(0, len(bs), 12):
             processes = []
-            bs_ = bs[i:i+5]
+            bs_ = bs[i:i+12]
             for b in bs_:
                 p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees))
                 processes.append(p)
@@ -238,7 +238,7 @@ if __name__ == '__main__':
 
         # save the data
         data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
-        data.to_csv(f'part1 data_comp1_{iter}.csv', index=False, sep=',')
+        data.to_csv(f'part1 data_comp2_{iters}.csv', index=False, sep=',')
 
         # plt.plot(bs, c_means_, 'o-', label='<c>')
         # plt.plot(bs, np.asarray(pcs_) / N, '^-', label='PC')
