@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import pandas as pd
+from tqdm import tqdm
 
 
 def generator(N, m, seed):
