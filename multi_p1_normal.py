@@ -146,7 +146,7 @@ def choose_neighbor(nodei, adj):
 
 # generate the b values
 # bs = np.arange(1, 5.8, 0.1)
-bs = np.arange(2.6, 3.4, 0.1)
+bs = np.arange(1, 3.4, 0.1)
 # transient time
 t0 = 5000
 # get steady
@@ -163,7 +163,7 @@ s_all = time.time()
 # for b in bs:
 
 def iter(N, m, c_means, pcs, pds, fs, b, nodes_, adj_, identity_, degrees_):
-    print(f'b = {b} start.')
+    # print(f'b = {b} start.')
     sb = time.time()
     nodes = nodes_
     adj = adj_
@@ -183,7 +183,7 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes_, adj_, identity_, degrees_):
     # get steady
     key = True
     for t in range(t1):
-        oldc = N - np.sum(identity)
+        # oldc = N - np.sum(identity)
         # calculate gain
         gains = dict()
         for node in nodes:
@@ -192,12 +192,12 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes_, adj_, identity_, degrees_):
         for node in nodes:
             nodej = choose_neighbor(node, adj)
             update1(node, nodej, b, gains, identity, degrees)
-        newc = N - np.sum(identity)
+        # newc = N - np.sum(identity)
         # find out reach steady state or not
-        if key:
-            if abs(newc - oldc) < 1 / np.sqrt(N):
-                print(f'we have reached the steady state after {t} times evolution.')
-                key = False
+        # if key:
+        #     if abs(newc - oldc) < 1 / np.sqrt(N):
+        #         print(f'we have reached the steady state after {t} times evolution.')
+        #         key = False
     c_means.append((b, (N - np.sum(identity)) / N))
     # pc, pd, f will all have N elements
     # if born as c or d, in pc, pd the elements on the same pos will be 1, 0 otherwise
@@ -237,7 +237,7 @@ def takefirst(x):
 
 if __name__ == '__main__':
     ma = Manager()
-    for iter in range(10):
+    for iters in range(6):
         # record the <c> for each b
         c_means = ma.list()
         # record for the number of PC
@@ -247,10 +247,10 @@ if __name__ == '__main__':
         # record for the number of F
         fs = ma.list()
         s = time.time()
-        ba, adj, identity, degrees, nodes = generator(N, m, seed=666+i)
-        for i in range(0, len(bs), 8):
+        ba, adj, identity, degrees, nodes = generator(N, m, seed=666+iters)
+        for i in range(0, len(bs), 12):
             processes = []
-            bs_ = bs[i:i + 8]
+            bs_ = bs[i:i + 12]
             for b in bs_:
                 p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees))
                 processes.append(p)
@@ -272,7 +272,7 @@ if __name__ == '__main__':
 
         # save the data
         data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
-        data.to_csv(f'normal_part1 data_comp_{iter}.csv', index=False, sep=',')
+        data.to_csv(f'normal_part1 data_comp_{iters}.csv', index=False, sep=',')
 
         # plt.plot(bs, c_means_, 'o-', label='<c>')
         # plt.plot(bs, np.asarray(pcs_) / N, '^-', label='PC')
