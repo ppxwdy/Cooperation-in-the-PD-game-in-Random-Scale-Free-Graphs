@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import pandas as pd
+from tqdm import tqdm
 
 
 def generator(N, m, seed):
@@ -237,7 +238,7 @@ def takefirst(x):
 
 if __name__ == '__main__':
     ma = Manager()
-    for iters in range(6):
+    for iters in tqdm(range(18, 22)):
         # record the <c> for each b
         c_means = ma.list()
         # record for the number of PC
