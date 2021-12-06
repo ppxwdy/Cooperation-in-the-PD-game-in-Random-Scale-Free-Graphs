@@ -154,10 +154,10 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
             update1(node, nodej, b, gains, identity, degrees)
         newc = N - np.sum(identity)
         # find out reach steady state or not
-        if key:
-            if abs(newc - oldc) < 1 / np.sqrt(N):
-                print(f'we have reached the steady state after {t} times evolution.')
-                key = False
+        # if key:
+        #     if abs(newc - oldc) < 1 / np.sqrt(N):
+        #         print(f'we have reached the steady state after {t} times evolution.')
+        #         key = False
     c_means.append((b, (N - np.sum(identity)) / N))
     # pc, pd, f will all have N elements
     # if born as c or d, in pc, pd the elements on the same pos will be 1, 0 otherwise
@@ -190,7 +190,7 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
     pcs.append((b, np.sum(records[0])))
     pds.append((b, np.sum(records[1])))
     fs.append((b, np.sum(records[2])))
-    print(f'The time we used for b = {b} is {eb - sb}s.')
+    # print(f'The time we used for b = {b} is {eb - sb}s.')
 
 
 # ea = time.time()
