@@ -187,5 +187,5 @@ if __name__ == '__main__':
     ax[0].legend()
     ax[1].legend()
 
-    plt.savefig('pic_part2.png')
+    plt.savefig('ba_part2.png')
     plt.show()
