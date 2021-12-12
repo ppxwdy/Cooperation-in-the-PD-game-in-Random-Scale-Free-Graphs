@@ -32,8 +32,9 @@ def generator(N, m, seed):
     adj = [(n, list(nbrdict.keys())) for n, nbrdict in ba.adjacency()]
 
     # do the exchange
-    exchange_time = N * 40
-    for t in range(exchange_time):
+    exchange_time, t = N, 0
+    # for t in range(exchange_time):
+    while t < exchange_time:
         # pick A
         a = np.random.randint(0, N)
         # pick B
@@ -43,7 +44,7 @@ def generator(N, m, seed):
         # pick C
         c = np.random.randint(0, N)
         cont = 0
-        while c in adj[a][1] or c in adj[b][1]:
+        while c in adj[a][1] or c in adj[b][1] or c == a or c == b:
             c = np.random.randint(0, N)
             cont += 1
             if cont >= 100:
@@ -53,7 +54,7 @@ def generator(N, m, seed):
         # pick D
         d = -1
         for n in adj[c][1]:
-            if n not in adj[a][1] and n not in adj[b][1]:
+            if n not in adj[a][1] and n not in adj[b][1] and n != a and n != b:
                 d = n
                 break
 
@@ -72,6 +73,7 @@ def generator(N, m, seed):
         adj[d][1].append(a)
         adj[c][1].append(b)
         adj[b][1].append(c)
+        t += 1
 
     # get the degrees [(0, [1, 2]), (1, [0, 3]), (2, [0, 3]), (3, [1, 2])]
     degrees = list(ba.degree())
@@ -147,7 +149,7 @@ def choose_neighbor(nodei, adj):
 
 # generate the b values
 # bs = np.arange(1, 5.8, 0.1)
-bs = np.arange(1, 3.4, 0.1)
+bs = np.arange(1, 4.2, 0.1)
 # transient time
 t0 = 5000
 # get steady
@@ -238,7 +240,7 @@ def takefirst(x):
 
 if __name__ == '__main__':
     ma = Manager()
-    for iters in tqdm(range(18, 22)):
+    for iters in tqdm(range(7, 15)):
         # record the <c> for each b
         c_means = ma.list()
         # record for the number of PC
@@ -248,10 +250,10 @@ if __name__ == '__main__':
         # record for the number of F
         fs = ma.list()
         s = time.time()
-        ba, adj, identity, degrees, nodes = generator(N, m, seed=666+iters)
-        for i in range(0, len(bs), 12):
+        ba, adj, identity, degrees, nodes = generator(N, m, seed=666)
+        for i in range(0, len(bs), 8):
             processes = []
-            bs_ = bs[i:i + 12]
+            bs_ = bs[i:i + 8]
             for b in bs_:
                 p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees))
                 processes.append(p)
