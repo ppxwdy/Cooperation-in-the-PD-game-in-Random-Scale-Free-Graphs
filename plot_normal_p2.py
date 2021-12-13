@@ -81,7 +81,7 @@ ax[1].set_ylim(0, 1)
 ax[0].set_xlabel('t')
 ax[1].set_xlabel('t')
 
-ax[1].legend(bbox_to_anchor=(.9, -.1), borderaxespad=0., ncol=5)
+ax[1].legend(bbox_to_anchor=(1, -.1), borderaxespad=0., ncol=6)
 plt.savefig('random_pic_part2_vertical.png')
 
 
