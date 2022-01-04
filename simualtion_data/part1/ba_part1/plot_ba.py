@@ -64,7 +64,6 @@ plt.plot(bs, np.asarray(pds) / N, 's-', label='PD',markersize=3,  clip_on=False)
 plt.plot(bs, np.asarray(f) / N, '*-', label='F', markersize=3, clip_on=False)
 
 
-
 plt.legend(loc=1)
 plt.xlabel('b')
 plt.ylabel('ratio')
