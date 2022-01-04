@@ -22,7 +22,8 @@ def generator(N, m, seed):
         identity[i] = 0  # 0 - C, 1 - D
 
     # generate a BA network with 4000 nodes and <k> = 2m = 4
-    ba = nx.barabasi_albert_graph(N, m, seed=seed)
+    # ba = nx.barabasi_albert_graph(N, m, seed=seed)
+    ba = nx.erdos_renyi_graph(4000, 4/3998, seed=seed)
     # ba = nx.scale_free_graph(N)
 
     # nodes
@@ -101,19 +102,21 @@ def choose_neighbor(nodei, adj):
     :return: the neighbour chosen randomly
     """
     neighbors = adj[nodei][1]
+    if len(neighbors) == 0:
+        return None
     dice = np.random.randint(0, len(neighbors))
     return neighbors[dice]
 
 
 # generate the b values
-bs = np.arange(1, 5.8, 0.1)
+bs = np.arange(1, 2.2, 0.1)
 # bs = np.arange(1, 2, 0.1)
 # transient time
 t0 = 5000
 # get steady
 t1 = 1000
 # after steady
-ts = 10000
+ts = 5000
 
 N = 4000
 m = 2
@@ -138,7 +141,8 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
         # update
         for node in nodes:
             nodej = choose_neighbor(node, adj)
-            update1(node, nodej, b, gains, identity, degrees)
+            if nodej:
+                update1(node, nodej, b, gains, identity, degrees)
 
     # get steady
     key = True
@@ -151,7 +155,8 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
         # update
         for node in nodes:
             nodej = choose_neighbor(node, adj)
-            update1(node, nodej, b, gains, identity, degrees)
+            if nodej:
+                update1(node, nodej, b, gains, identity, degrees)
         newc = N - np.sum(identity)
         # find out reach steady state or not
         # if key:
@@ -181,7 +186,8 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
         # update
         for node in nodes:
             nodej = choose_neighbor(node, adj)
-            update2(node, nodej, b, gains, records, identity, degrees)
+            if nodej:
+                update2(node, nodej, b, gains, records, identity, degrees)
 
 
 
@@ -203,7 +209,7 @@ def takefirst(x):
 
 if __name__ == '__main__':
     ma = Manager()
-    for iters in tqdm(range(10)):
+    for iters in tqdm(range(3)):
         # record the <c> for each b
         c_means = ma.list()
         # record for the number of PC
@@ -214,9 +220,9 @@ if __name__ == '__main__':
         fs = ma.list()
         s = time.time()
         ba, adj, identity, degrees, nodes = generator(N, m, 666+iters)
-        for i in range(0, len(bs), 12):
+        for i in range(0, len(bs), 6):
             processes = []
-            bs_ = bs[i:i+12]
+            bs_ = bs[i:i+6]
             for b in bs_:
                 p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees))
                 processes.append(p)
@@ -238,13 +244,13 @@ if __name__ == '__main__':
 
         # save the data
         data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
-        data.to_csv(f'part1 data_comp1_{10+iters}.csv', index=False, sep=',')
+        data.to_csv(f'part1 er{iters}.csv', index=False, sep=',')
 
-        # plt.plot(bs, c_means_, 'o-', label='<c>')
-        # plt.plot(bs, np.asarray(pcs_) / N, '^-', label='PC')
-        # plt.plot(bs, np.asarray(pds_) / N, 's-', label='PD')
-        # plt.plot(bs, np.asarray(fs_) / N, '*-', label='F')
-        # plt.legend()
-        # plt.xlabel('b')
-        # plt.savefig('pic01.png')
-        # plt.show()
+        plt.plot(bs, c_means_, 'o-', label='<c>')
+        plt.plot(bs, np.asarray(pcs_) / N, '^-', label='PC')
+        plt.plot(bs, np.asarray(pds_) / N, 's-', label='PD')
+        plt.plot(bs, np.asarray(fs_) / N, '*-', label='F')
+        plt.legend()
+        plt.xlabel('b')
+        # plt.savefig('pic01_er.png')
+        plt.show()

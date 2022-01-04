@@ -30,55 +30,13 @@ def generator(N, m, seed):
 
     # get the neighbours for each vert [(0, [1, 2]), (1, [0, 3]), (2, [0, 3]), (3, [1, 2])]
     adj = [(n, list(nbrdict.keys())) for n, nbrdict in ba.adjacency()]
-
-    # do the exchange
-    exchange_time, t = N, 0
-    # for t in range(exchange_time):
-    while t < exchange_time:
-        # pick A
-        a = np.random.randint(0, N)
-        # pick B
-        b_i = np.random.randint(0, len(adj[a][1]))
-        b = adj[a][1][b_i]
-
-        # pick C
-        c = np.random.randint(0, N)
-        cont = 0
-        while c in adj[a][1] or c in adj[b][1] or c == a or c == b:
-            c = np.random.randint(0, N)
-            cont += 1
-            if cont >= 100:
-                break
-        if cont >= 100:
-            continue
-        # pick D
-        d = -1
-        for n in adj[c][1]:
-            if n not in adj[a][1] and n not in adj[b][1] and n != a and n != b:
-                d = n
-                break
-
-        # not get a d, then re-do
-        # else, do switch
-        if d == -1:
-            continue
-        else:
-            # cut
-            adj[a][1].remove(b)
-            adj[b][1].remove(a)
-            adj[c][1].remove(d)
-            adj[d][1].remove(c)
-
-        adj[a][1].append(d)
-        adj[d][1].append(a)
-        adj[c][1].append(b)
-        adj[b][1].append(c)
-        t += 1
-
     # get the degrees [(0, [1, 2]), (1, [0, 3]), (2, [0, 3]), (3, [1, 2])]
     degrees = list(ba.degree())
 
     return ba, adj, identity, degrees, nodes
+
+
+# ba, adj, identity, degrees, nodes = generator(4000, 2)
 
 
 def cal_gain(node, b, adj, identity):
@@ -148,8 +106,8 @@ def choose_neighbor(nodei, adj):
 
 
 # generate the b values
-# bs = np.arange(1, 5.8, 0.1)
-bs = np.arange(1, 4.2, 0.1)
+bs = np.arange(1, 5.8, 0.1)
+# bs = np.arange(1, 2, 0.1)
 # transient time
 t0 = 5000
 # get steady
@@ -165,13 +123,12 @@ s_all = time.time()
 
 # for b in bs:
 
-def iter(N, m, c_means, pcs, pds, fs, b, nodes_, adj_, identity_, degrees_):
-    # print(f'b = {b} start.')
+def iter(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees):
+    print(f'b = {b} start.')
     sb = time.time()
-    nodes = nodes_
-    adj = adj_
-    identity = identity_
-    degrees = degrees_
+    # generate the graph
+
+
     # pre-evo
     for t in range(t0):
         # calculate gain
@@ -186,7 +143,7 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes_, adj_, identity_, degrees_):
     # get steady
     key = True
     for t in range(t1):
-        # oldc = N - np.sum(identity)
+        oldc = N - np.sum(identity)
         # calculate gain
         gains = dict()
         for node in nodes:
@@ -195,7 +152,7 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes_, adj_, identity_, degrees_):
         for node in nodes:
             nodej = choose_neighbor(node, adj)
             update1(node, nodej, b, gains, identity, degrees)
-        # newc = N - np.sum(identity)
+        newc = N - np.sum(identity)
         # find out reach steady state or not
         # if key:
         #     if abs(newc - oldc) < 1 / np.sqrt(N):
@@ -226,12 +183,18 @@ def iter(N, m, c_means, pcs, pds, fs, b, nodes_, adj_, identity_, degrees_):
             nodej = choose_neighbor(node, adj)
             update2(node, nodej, b, gains, records, identity, degrees)
 
+
+
     eb = time.time()
 
     pcs.append((b, np.sum(records[0])))
     pds.append((b, np.sum(records[1])))
     fs.append((b, np.sum(records[2])))
-    print(f'The time we used for b = {b} is {eb - sb}s.')
+    # print(f'The time we used for b = {b} is {eb - sb}s.')
+
+
+# ea = time.time()
+# print(f'The time we used for all bs is {s_all-ea}s.')
 
 
 def takefirst(x):
@@ -240,7 +203,7 @@ def takefirst(x):
 
 if __name__ == '__main__':
     ma = Manager()
-    for iters in tqdm(range(7, 15)):
+    for iters in tqdm(range(10)):
         # record the <c> for each b
         c_means = ma.list()
         # record for the number of PC
@@ -250,10 +213,10 @@ if __name__ == '__main__':
         # record for the number of F
         fs = ma.list()
         s = time.time()
-        ba, adj, identity, degrees, nodes = generator(N, m, seed=666)
-        for i in range(0, len(bs), 8):
+        ba, adj, identity, degrees, nodes = generator(N, m, 666+iters)
+        for i in range(0, len(bs), 12):
             processes = []
-            bs_ = bs[i:i + 8]
+            bs_ = bs[i:i+12]
             for b in bs_:
                 p = Process(target=iter, args=(N, m, c_means, pcs, pds, fs, b, nodes, adj, identity, degrees))
                 processes.append(p)
@@ -275,7 +238,7 @@ if __name__ == '__main__':
 
         # save the data
         data = pd.DataFrame({'<c>': c_means_, 'PC': pcs_, 'PD': pds_, 'F': fs_})
-        data.to_csv(f'normal_part1 data_comp_{iters}.csv', index=False, sep=',')
+        data.to_csv(f'part1 data_comp1_{iters}.csv', index=False, sep=',')
 
         # plt.plot(bs, c_means_, 'o-', label='<c>')
         # plt.plot(bs, np.asarray(pcs_) / N, '^-', label='PC')
@@ -283,5 +246,5 @@ if __name__ == '__main__':
         # plt.plot(bs, np.asarray(fs_) / N, '*-', label='F')
         # plt.legend()
         # plt.xlabel('b')
-        # plt.savefig('normal_pic02_2_2.png')
+        # plt.savefig('pic01.png')
         # plt.show()

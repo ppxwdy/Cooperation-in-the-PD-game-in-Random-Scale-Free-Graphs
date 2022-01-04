@@ -1,5 +1,13 @@
 # MSDM5003_final_project
 
+## Document introduction:
+The result figures are shown in the result directory.
+
+The programs to run the simulations are in the result program directory, the introduction of
+them are also in the file.
+
+The rest of the directories store the data we generated in the process.
+
 ## Brief introduction：
 For this final project, we are going to study the cooperation in the prisoner's dilemma game in Random scale-free graphs in the means of BA graph.
 
