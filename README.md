@@ -11,6 +11,22 @@ The rest of the directories store the data we generated in the process.
 ## Brief introduction：
 For this final project, we are going to study the cooperation in the prisoner's dilemma game in Random scale-free graphs in the means of BA graph.
 
+### Part1: Dynamic feature
+For BA network:
+
+Run the simulation, seeing the c, pc, pd, f (explained later in this file) curve against b.
+    
+For random scale free network:
+
+Rewire BA network to get the random scale free network.
+    
+Run the simulation, seeing the c, pc, pd, f (explained later in this file) curve against b.
+
+### Part2: Effect of initial condition
+
+Run simulation in both of the network to see the effect of initial condition.
+
+
 ## Brief description of the process
 
 ### PART1 Get the relation of c, PC, PD, F against b
