@@ -1,6 +1,23 @@
 # MSDM5003_final_project
 
-## Brief introduction of the project：
+## Document introduction:
+
+1. result_program: The programs to run the simulations are in the result program directory
+2. simulation_data: \
+    a. part1: stores the simulation data for part1 in csv files \
+    b. part2: stores the simulation data for part2 in csv files
+3. result_figure: The result figures for all the simulation in this project
+4. part2
+    
+
+The result figures are shown in the result directory.
+
+The programs to run the simulations are in the result program directory, the introduction of
+them are also in the file.
+
+The rest of the directories store the data we generated in the process.
+
+## Brief introduction：
 For this final project, we are going to study the cooperation in the prisoner's dilemma game in Random scale-free graphs in the means of BA graph.
 
 ### Part1: Dynamic feature
@@ -19,7 +36,7 @@ Run the simulation, seeing the c, pc, pd, f (explained later in this file) curve
 Run simulation in both of the network to see the effect of initial condition.
 
 
-## Brief description of the simulation process
+## Brief description of the process
 
 ### PART1 Get the relation of c, PC, PD, F against b
 
@@ -69,11 +86,4 @@ Other things are the same for this part, the only difference is how to assign c 
 <img width="999" alt="Screen Shot 2021-11-12 at 4 57 31 PM" src="https://user-images.githubusercontent.com/58164010/141439656-519ef058-1fcd-4f82-8584-b5e93645b972.png">
 We can get a c(t) - b curve and a c means - b curve.
 
-## Document introduction:
 
-1. result_program: The programs to run the simulations are in the result program directory
-2. simulation_data: \
-    a. part1: stores the simulation data for part1 in csv files \
-    b. part2: stores the simulation data for part2 in csv files
-3. result_figure: The result figures for all the simulation in this project
-4. part2_plot_program: plot programs for part2 simulation.
