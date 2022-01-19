@@ -1,4 +1,4 @@
-# MSDM5003_final_project
+# Cooperation-in-the-PD-game-in-Random-Scale-Free-Graphs
 
 ## Document introduction:
 
