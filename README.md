@@ -1,4 +1,4 @@
-# Cooperation-in-the-PD-game-in-Random-Scale-Free-Graphs
+# Cooperation in the PD game in Rewired Scale Free Graphs
 
 ## Document introduction:
 
